@@ -2,304 +2,568 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <title>资治通鉴 · 周纪一 | zizhi-kb</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;700&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#faf8f5;--card:#fff;--text:#2c2c2c;--sub:#999;--accent:#8B2500;
+  --person:#8B4513;--place:#7c6d2f;--system:#2c5f8a;--hist:#6b3a6b;
+  --time:#2e7d32;--border:rgba(0,0,0,.06);--shadow:0 2px 12px rgba(0,0,0,.06);
+  --note:#fef3e2;--guang:#3d5a80;
+}
 html{scroll-behavior:smooth}
-body{background:#0c0a08;font-family:'Noto Serif SC',serif;color:#3a2a1a}
+body{font-family:"Noto Serif SC","PingFang SC",serif;background:var(--bg);color:var(--text);
+  -webkit-font-smoothing:antialiased;line-height:1.6;overflow-x:hidden}
 
-/* 顶部栏 */
-.topbar{
-  position:fixed;top:0;left:0;right:0;z-index:100;
-  background:rgba(12,10,8,.92);backdrop-filter:blur(12px);
-  border-bottom:1px solid rgba(200,168,96,.15);
-  display:flex;align-items:center;padding:0 20px;height:52px;
-}
-.topbar-title{font-family:'Ma Shan Zheng',cursive;font-size:20px;color:#c8a860;flex:1;text-align:center;letter-spacing:.1em}
-.topbar-sub{font-size:10px;color:rgba(200,168,96,.4);letter-spacing:.15em}
-.back-btn{font-size:12px;color:rgba(200,168,96,.5);cursor:pointer;border:none;background:none;padding:6px 10px;border-radius:6px;transition:all .2s}
-.back-btn:hover{color:#c8a860;background:rgba(200,168,96,.08)}
-.topbar-right{width:60px}
+/* ===== TOPBAR ===== */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:500;height:52px;
+  background:rgba(250,248,245,.95);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:10px}
+.topbar-title{flex:1;text-align:center;font-size:14px;color:var(--text);letter-spacing:3px;font-weight:500}
+.topbar-btn{width:44px;height:44px;border-radius:50%;background:transparent;border:none;
+  cursor:pointer;font-size:18px;color:#666;display:flex;align-items:center;justify-content:center}
+.topbar-btn:active{background:rgba(0,0,0,.05)}
 
-/* 筛选栏 */
-.filterbar{
-  position:fixed;top:52px;left:0;right:0;z-index:99;
-  background:rgba(12,10,8,.88);backdrop-filter:blur(8px);
-  padding:10px 16px;display:flex;gap:8px;overflow-x:auto;
-  border-bottom:1px solid rgba(200,168,96,.1);
-}
-.filterbar::-webkit-scrollbar{display:none}
-.fbtn{
-  flex-shrink:0;padding:4px 12px;border-radius:14px;font-size:12px;
-  border:1px solid rgba(200,168,96,.25);color:rgba(200,168,96,.5);
-  background:transparent;cursor:pointer;transition:all .2s;white-space:nowrap;
-}
-.fbtn.active,.fbtn:hover{background:rgba(200,168,96,.12);color:#c8a860;border-color:rgba(200,168,96,.5)}
+/* ===== HERO ===== */
+.hero{margin-top:52px;padding:48px 24px 36px;text-align:center;
+  background:linear-gradient(180deg,#fff 0%,var(--bg) 100%);border-bottom:1px solid var(--border)}
+.hero-era{font-size:11px;color:var(--accent);letter-spacing:3px;margin-bottom:10px;font-weight:500}
+.hero h1{font-size:28px;font-weight:600;letter-spacing:6px;color:var(--text);margin-bottom:8px}
+.hero-sub{font-size:13px;color:var(--sub);letter-spacing:2px;margin-bottom:20px}
+.hero-quote{position:relative;padding:16px 24px;font-size:16px;color:var(--text);
+  line-height:2;letter-spacing:2px;font-weight:300;max-width:480px;margin:0 auto;
+  border-left:2px solid rgba(139,37,0,.3);text-align:left;font-style:normal}
+.hero-quote cite{display:block;text-align:right;margin-top:8px;font-size:12px;color:var(--sub);font-style:normal}
 
-/* 主内容 */
-.main{padding-top:100px;padding-bottom:80px}
+/* ===== TIMELINE ===== */
+.timeline{padding:20px 0 8px;background:var(--bg);border-bottom:1px solid var(--border)}
+.tl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;padding:0 16px}
+.tl-track{display:flex;gap:4px;min-width:max-content;padding:4px 0}
+.tl-item{padding:8px 16px;border-radius:20px;font-size:12px;color:var(--sub);
+  letter-spacing:1px;cursor:pointer;white-space:nowrap;border:1px solid transparent;
+  transition:all .2s;background:rgba(0,0,0,.03)}
+.tl-item:hover{color:var(--text);background:rgba(0,0,0,.06)}
+.tl-item.active{color:var(--accent);border-color:rgba(139,37,0,.3);
+  background:rgba(139,37,0,.06);font-weight:500}
 
-/* 条目卡片 */
-.entry{
-  margin:0 16px 32px;background:#13100c;
-  border:1px solid rgba(200,168,96,.12);border-radius:12px;
-  overflow:hidden;
-}
-.entry-header{
-  padding:16px 20px 12px;border-bottom:1px solid rgba(200,168,96,.08);
-}
-.entry-year{font-size:11px;color:rgba(200,168,96,.35);letter-spacing:.25em;margin-bottom:4px}
-.entry-title{font-family:'Ma Shan Zheng',cursive;font-size:18px;color:#e0d0a0;line-height:1.5}
+/* ===== FILTERS ===== */
+.filters{padding:16px 16px 8px;position:sticky;top:52px;z-index:100;
+  background:rgba(250,248,245,.96);backdrop-filter:blur(12px)}
+.search-wrap{position:relative;margin-bottom:12px}
+.search-wrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);
+  width:16px;height:16px;color:#ccc;pointer-events:none}
+.search-input{width:100%;padding:10px 14px 10px 38px;border:1px solid var(--border);
+  border-radius:12px;font-size:14px;font-family:inherit;background:var(--card);
+  color:var(--text);outline:none;transition:border-color .2s}
+.search-input:focus{border-color:rgba(139,37,0,.3)}
+.search-input::placeholder{color:#ccc}
+.filter-tags{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+.ftag{padding:8px 18px;border-radius:16px;font-size:13px;color:var(--sub);
+  background:rgba(0,0,0,.03);border:1px solid transparent;cursor:pointer;
+  white-space:nowrap;font-family:inherit;transition:all .15s;letter-spacing:1px}
+.ftag:active{transform:scale(.96)}
+.ftag.active{color:var(--accent);background:rgba(139,37,0,.06);
+  border-color:rgba(139,37,0,.2);font-weight:500}
 
-/* 层级标签 */
-.layer-tabs{
-  display:flex;gap:0;border-bottom:1px solid rgba(200,168,96,.1);
-  background:#0e0c09;
-}
-.ltab{
-  flex:1;padding:8px 4px;text-align:center;font-size:10px;
-  color:rgba(200,168,96,.35);cursor:pointer;transition:all .2s;
-  border:none;background:transparent;letter-spacing:.05em;
-}
-.ltab.active{color:#c8a860;background:rgba(200,168,96,.06)}
-.ltab:hover{color:rgba(200,168,96,.7)}
+/* ===== POEM/EVENT LIST ===== */
+.events{padding:4px 16px 120px}
+.event-card{background:var(--card);border-radius:14px;padding:18px 20px;margin-bottom:12px;
+  border:1px solid var(--border);cursor:pointer;transition:all .15s;position:relative}
+.event-card:active{transform:scale(.985);box-shadow:var(--shadow)}
+.card-top{display:flex;align-items:baseline;gap:8px;margin-bottom:4px}
+.card-num{font-size:11px;color:#ddd;font-weight:500;flex-shrink:0;min-width:28px}
+.card-year{font-size:11px;color:var(--accent);letter-spacing:1px;font-weight:500;margin-right:4px}
+.card-title{font-size:16px;color:var(--text);letter-spacing:1px;font-weight:500;line-height:1.7}
+.card-meta{font-size:11px;color:var(--sub);margin-bottom:8px;letter-spacing:1px;
+  display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.card-period{padding:1px 8px;border-radius:8px;font-size:10px;
+  background:rgba(139,37,0,.06);color:var(--accent)}
+.card-ann{font-size:14px;color:#555;line-height:2.2;letter-spacing:.5px;
+  min-height:50px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;
+  -webkit-line-clamp:4;-webkit-box-orient:vertical}
+.card-guang{font-size:12px;color:var(--guang);margin-top:8px;line-height:1.8;
+  padding:8px 10px;background:rgba(61,90,128,.04);border-radius:8px;
+  border-left:2px solid rgba(61,90,128,.3);
+  overflow:hidden;text-overflow:ellipsis;display:-webkit-box;
+  -webkit-line-clamp:3;-webkit-box-orient:vertical}
+.card-guang::before{content:'臣光曰：';font-weight:600}
+.card-bottom{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.badge{padding:2px 8px;border-radius:8px;font-size:10px;color:var(--sub);
+  background:rgba(0,0,0,.03);border:1px solid rgba(0,0,0,.06)}
 
-/* 层内容 */
-.layer-content{display:none;padding:16px 20px 20px}
-.layer-content.active{display:block}
+/* ===== ENTITY TYPES ===== */
+.e{padding:0 1px;border-radius:2px;cursor:help;transition:background .15s}
+.e-person{color:var(--person);font-weight:500;text-decoration:underline;text-decoration-style:solid;
+  text-decoration-color:var(--person);text-underline-offset:3px;text-decoration-thickness:1.5px;
+  background:rgba(139,69,19,.04)}
+.e-place{color:var(--place);font-weight:500;text-decoration:underline;text-decoration-style:double;
+  text-decoration-color:var(--place);text-underline-offset:3px;background:rgba(124,109,47,.04)}
+.e-system{color:var(--system);font-weight:500;text-decoration:underline;text-decoration-style:dashed;
+  text-decoration-color:var(--system);text-underline-offset:3px;background:rgba(44,95,138,.04)}
+.e-hist{color:var(--hist);font-weight:500;font-style:italic;text-decoration:underline;
+  text-decoration-style:wavy;text-decoration-color:var(--hist);text-underline-offset:3px;
+  background:rgba(107,58,107,.03)}
+.e-time{color:var(--time);font-weight:500;text-decoration:underline;text-decoration-style:dotted;
+  text-decoration-color:var(--time);text-underline-offset:3px;background:rgba(46,125,50,.04)}
 
-.layer-label{
-  display:inline-flex;align-items:center;gap:6px;
-  font-size:10px;letter-spacing:.2em;color:rgba(200,168,96,.4);
-  margin-bottom:10px;
-}
-.layer-label::before{content:'';display:inline-block;width:3px;height:10px;border-radius:2px}
+/* ===== TOOLTIP ===== */
+.tip{display:none;position:fixed;z-index:9999;max-width:280px;padding:10px 14px;
+  background:#333;color:#eee;font-size:13px;line-height:1.7;border-radius:10px;
+  box-shadow:0 4px 20px rgba(0,0,0,.25);pointer-events:none;font-weight:400}
+.tip.show{display:block}
+.tip-type{font-size:10px;color:rgba(255,255,255,.5);margin-bottom:4px;letter-spacing:1px}
+.tip-name{font-weight:600;font-size:14px;margin-bottom:4px}
 
-.orig-text{
-  font-size:16px;line-height:2.2;color:rgba(230,220,190,.85);
-  letter-spacing:.05em;font-weight:300;
-}
-.bai-text{
-  font-size:14px;line-height:2;color:rgba(200,180,150,.75);
-  margin-top:10px;padding:12px 14px;
-  background:rgba(200,168,96,.04);border-radius:8px;
-  border-left:2px solid rgba(200,168,96,.2);
-}
-.xun-gu{font-size:12px;line-height:2;color:rgba(180,160,120,.7)}
-.xun-gu-item{margin-bottom:6px;padding-left:8px;border-left:2px solid rgba(200,168,96,.15)}
-.xun-gu-item strong{color:rgba(200,168,96,.6)}
+/* ===== LAYER PANES (right side) ===== */
+.layer-overlay{display:none;position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.2)}
+.layer-overlay.show{display:block}
+.layer-panel{position:fixed;top:0;right:0;bottom:0;z-index:601;
+  width:min(420px,95vw);background:var(--card);
+  transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);
+  display:flex;flex-direction:column;box-shadow:-4px 0 40px rgba(0,0,0,.08)}
+.layer-panel.open{transform:translateX(0)}
+.layer-hd{padding:16px 20px 12px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:12px}
+.layer-hd-title{flex:1;font-size:16px;font-weight:600;letter-spacing:4px;color:var(--text)}
+.layer-close{width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,.04);
+  border:none;cursor:pointer;font-size:18px;color:#999;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0}
+.layer-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0;overflow-x:auto}
+.layer-tabs::-webkit-scrollbar{display:none}
+.layer-tab{flex-shrink:0;padding:10px 16px;font-size:12px;color:var(--sub);background:none;
+  border:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;
+  font-family:inherit;letter-spacing:1px}
+.layer-tab.on{color:var(--accent);border-bottom-color:var(--accent);font-weight:500}
+.layer-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:20px}
+.layer-body::-webkit-scrollbar{width:3px}
+.layer-body::-webkit-scrollbar-thumb{background:rgba(0,0,0,.08);border-radius:2px}
 
-.bg-timeline{
-  position:relative;padding-left:16px;
-  border-left:2px solid rgba(200,168,96,.15);
-}
-.bg-event{position:relative;padding:4px 0 10px 20px}
-.bg-event::before{content:'';position:absolute;left:-17px;top:10px;width:8px;height:8px;border-radius:50%;background:rgba(200,168,96,.3);border:2px solid #0c0a08}
-.bg-event-year{font-size:11px;color:rgba(200,168,96,.5);margin-bottom:2px;letter-spacing:.1em}
-.bg-event-title{font-size:13px;color:rgba(220,200,160,.8);line-height:1.6}
-.bg-event-body{font-size:12px;color:rgba(180,160,120,.6);line-height:1.7;margin-top:2px}
+/* Layer content styles */
+.ly-header{margin-bottom:20px}
+.ly-year{font-size:11px;color:var(--accent);letter-spacing:2px;margin-bottom:8px;font-weight:500}
+.ly-title{font-size:20px;font-weight:600;letter-spacing:3px;color:var(--text);line-height:1.6}
+.ly-sep{height:1px;background:linear-gradient(to right,rgba(139,37,0,.2),transparent);margin:16px 0}
 
-.husan{
-  font-size:13px;line-height:2;color:rgba(200,180,140,.7);
-  padding:12px 14px;background:rgba(200,168,96,.03);
-  border-radius:8px;border:1px solid rgba(200,168,96,.1);
-}
-.husan blockquote{
-  margin:8px 0 0 0;padding:8px 12px;
-  background:rgba(200,168,96,.05);border-radius:6px;
-  border-left:3px solid rgba(200,168,96,.25);
-  font-style:normal;font-size:12px;color:rgba(200,180,140,.85);
-}
+.orig-block{font-size:17px;line-height:2.4;color:var(--text);letter-spacing:1px;font-weight:300}
+.orig-block p{margin-bottom:12px}
 
-.pinghua-block,.sima-block,.xitong-block,.yingshe-block,.siduan-block{
-  font-size:13px;line-height:2;color:rgba(200,180,140,.75)}
-.sima-block h4{color:rgba(200,168,96,.6);font-size:12px;margin:8px 0 4px;font-weight:400}
+.bai-block{font-size:14px;line-height:2.2;color:#555;letter-spacing:.5px;
+  padding:16px;background:var(--note);border-radius:12px;border-left:3px solid rgba(139,37,0,.3)}
+
+.xun-block{font-size:13px;line-height:2.2;color:#555}
+.xun-item{margin-bottom:14px;padding:12px 14px;background:rgba(0,0,0,.02);border-radius:8px;
+  border-left:2px solid rgba(139,37,0,.2)}
+.xun-item strong{color:var(--accent);font-weight:600;margin-right:6px}
+
+.bg-block{position:relative;padding-left:16px;border-left:2px solid rgba(139,37,0,.2)}
+.bg-event{position:relative;padding:4px 0 14px 20px}
+.bg-event::before{content:'';position:absolute;left:-17px;top:10px;width:8px;height:8px;
+  border-radius:50%;background:rgba(139,37,0,.3);border:2px solid var(--card)}
+.bg-event-year{font-size:11px;color:var(--accent);margin-bottom:2px;letter-spacing:.1em;font-weight:500}
+.bg-event-title{font-size:14px;color:var(--text);line-height:1.7;font-weight:500;letter-spacing:1px}
+.bg-event-body{font-size:12px;color:#777;line-height:1.8;margin-top:2px}
+
+.husan-block{font-size:13px;line-height:2.2;color:var(--guang)}
+.husan-block blockquote{margin:0;padding:14px 16px;background:rgba(61,90,128,.04);
+  border-radius:8px;border-left:3px solid rgba(61,90,128,.4);font-style:normal}
+
+.sima-block h4{color:var(--accent);font-size:13px;margin:16px 0 8px;font-weight:600;letter-spacing:1px}
 .sima-block h4:first-child{margin-top:0}
-.sima-block p{margin:4px 0}
-.xitong-block .player-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
-.player-card{background:rgba(200,168,96,.04);border-radius:8px;padding:10px 12px;border:1px solid rgba(200,168,96,.1)}
-.player-card .p-label{font-size:10px;color:rgba(200,168,96,.4);margin-bottom:4px;letter-spacing:.1em}
-.player-card .p-val{font-size:12px;color:rgba(220,200,160,.8);line-height:1.6}
-.logic-chain{display:flex;flex-wrap:wrap;gap:4px;margin:8px 0}
-.logic-chain span{font-size:12px;padding:2px 8px;background:rgba(200,168,96,.08);border-radius:4px;color:rgba(200,168,96,.6)}
-.logic-chain .arrow{background:none;color:rgba(200,168,96,.3);padding:2px 2px}
+.sima-block p{font-size:13px;line-height:2.2;color:#555;margin-bottom:8px}
 
-.yingshe-block .modern{background:rgba(200,168,96,.04);border-radius:8px;padding:10px 14px;border:1px solid rgba(200,168,96,.12);margin-top:10px}
-.modern h4{color:rgba(200,168,96,.55);font-size:12px;font-weight:400;margin-bottom:6px}
-.modern p{font-size:12px;line-height:1.9;color:rgba(200,180,140,.7)}
+.xitong-block .player-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.player-card{background:rgba(0,0,0,.02);border-radius:8px;padding:12px;border:1px solid rgba(0,0,0,.06)}
+.player-card .p-label{font-size:10px;color:var(--sub);margin-bottom:6px;letter-spacing:1px}
+.player-card .p-val{font-size:13px;color:var(--text);line-height:1.7}
+.logic-chain{display:flex;flex-wrap:wrap;gap:5px;margin:10px 0;align-items:center}
+.logic-chain span{font-size:12px;padding:3px 10px;background:rgba(139,37,0,.06);border-radius:4px;color:var(--accent)}
+.logic-chain .arrow{background:none;color:#ccc;padding:3px 4px}
 
-.siduan-block .q-item{margin-bottom:8px}
-.siduan-block .q-label{font-size:11px;color:rgba(200,168,96,.4);letter-spacing:.05em;margin-bottom:2px}
-.siduan-block .q-text{font-size:13px;color:rgba(200,180,140,.75);line-height:1.7}
+.yingshe-block .modern-item{background:rgba(139,37,0,.03);border-radius:10px;padding:12px 16px;
+  margin-bottom:10px;border:1px solid rgba(139,37,0,.1)}
+.modern-item h4{font-size:12px;color:var(--accent);font-weight:600;margin-bottom:4px;letter-spacing:1px}
+.modern-item p{font-size:13px;color:#555;line-height:1.9}
 
-/* 空状态 */
-.empty{text-align:center;padding:60px 20px;color:rgba(200,168,96,.3);font-size:14px}
+.siduan-block .q-item{margin-bottom:14px;padding:12px 14px;background:rgba(0,0,0,.02);
+  border-radius:8px;border:1px solid rgba(0,0,0,.05)}
+.q-label{font-size:10px;color:var(--accent);letter-spacing:.5em;margin-bottom:4px;font-weight:600}
+.q-text{font-size:13px;color:#555;line-height:1.9}
 
-/* 加载 */
-.loading{padding:40px;text-align:center;color:rgba(200,168,96,.3);font-size:13px}
+/* ===== EMPTY STATE ===== */
+.empty-state{padding:80px 20px;text-align:center;color:var(--sub);font-size:14px}
+
+/* ===== LAYER BADGES on cards ===== */
+.layer-badges{display:flex;gap:4px;flex-wrap:wrap;margin-top:8px}
+.layer-badge{padding:2px 8px;border-radius:6px;font-size:10px;
+  color:var(--accent);background:rgba(139,37,0,.06);border:1px solid rgba(139,37,0,.12)}
 </style>
 </head>
 <body>
 
+<!-- TOPBAR -->
 <div class="topbar">
-  <button class="back-btn" onclick="history.back()">←</button>
-  <div>
-    <div class="topbar-title">资治通鉴</div>
-    <div class="topbar-sub">周纪一 · 三家分晋</div>
+  <button class="topbar-btn" id="btnIndex">☰</button>
+  <div class="topbar-title">资治通鉴</div>
+  <button class="topbar-btn" id="btnShare">↑</button>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-era">北宋 · 司马光</div>
+  <h1>周纪一 · 三家分晋</h1>
+  <div class="hero-sub">威烈王二十三年 — 安王二十六年 | 公元前403—前369</div>
+  <div class="hero-quote">
+    臣闻天子之职莫大于礼，礼莫大于分，分莫大于名。
+    <cite>— 司马光 · 臣光曰</cite>
   </div>
-  <div class="topbar-right"></div>
 </div>
 
-<div class="filterbar" id="filterBar">
-  <button class="fbtn active" data-filter="all">全部</button>
-  <button class="fbtn" data-filter="key">重点事件</button>
-  <button class="fbtn" data-filter="guangzhu">含臣光曰</button>
+<!-- TIMELINE -->
+<div class="timeline">
+  <div class="tl-scroll">
+    <div class="tl-track" id="timeline"></div>
+  </div>
 </div>
 
-<div class="main" id="entryList">
-  <div class="loading">加载中...</div>
+<!-- FILTERS -->
+<div class="filters">
+  <div class="search-wrap">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input class="search-input" id="searchInput" placeholder="搜索事件...">
+  </div>
+  <div class="filter-tags" id="filterTags">
+    <button class="ftag active" data-filter="all">全部</button>
+    <button class="ftag" data-filter="guang">含臣光曰</button>
+    <button class="ftag" data-filter="key">重点事件</button>
+  </div>
+</div>
+
+<!-- EVENT LIST -->
+<div class="events" id="eventList"></div>
+
+<!-- TOOLTIP -->
+<div class="tip" id="tip">
+  <div class="tip-type" id="tipType"></div>
+  <div class="tip-name" id="tipName"></div>
+</div>
+
+<!-- LAYER PANEL -->
+<div class="layer-overlay" id="layerOverlay"></div>
+<div class="layer-panel" id="layerPanel">
+  <div class="layer-hd">
+    <div class="layer-hd-title" id="layerPanelTitle">详情</div>
+    <button class="layer-close" id="layerClose">✕</button>
+  </div>
+  <div class="layer-tabs" id="layerTabs"></div>
+  <div class="layer-body" id="layerBody"></div>
 </div>
 
 <script>
-// 数据（由 parse_zizhi.py 生成）
-const ENTRIES = [{"king": "威烈王", "year": "威烈王二十三年（戊寅，西元前四〇三年）", "main_text": "", "guangzhu": ":: 臣光曰：臣闻天子之职莫大于礼，礼莫大于分，分莫大于名。何謂礼？纪纲是也；何謂分？君臣是也；何謂名？公、侯、卿、大夫是也。\n:: 夫以四海之广，兆民之眾，受制于一人，虽有絕倫之力，高世之智，莫敢不奔走而服役者，豈非以礼为之〔纪〕纲(纪)哉！是故天子统三公，三公率諸侯，諸侯制卿大夫，卿大夫治士庶人。貴以臨賤，賤以承貴。上之使下，犹心腹之运手足，根本之制支葉；下之事上，犹手足之卫心腹，支葉之庇本根。然後能上下相保而国家治安。故曰：天子之职莫大于礼也。\n:: 文王序《易》，以乾坤为首。孔子繫之曰：「天尊地卑，乾坤定矣，卑高以阵，貴賤位矣。」言君臣之位，犹天地之不可易也。《春秋》抑諸侯，尊〔周〕(王)室，王人虽微，序于諸侯之上，以是见圣人于君臣之際，未嘗不惓惓也。非有桀、纣之暴，汤、武之仁，人歸之，天命之，君臣之分，當守節伏死而已矣。是故以微子而代纣，則成汤配天矣；以季札而君吴，則太伯血食矣。然二子寧亡国而不为者，誠以礼之大節不可乱也。故曰：礼莫大于分也。\n:: 夫礼，辨貴賤，序親疏，裁群物，制庶事。非名不著，非器不形。名以命之，器以別之，然後上下粲然有倫，此礼之大经也。名器既亡，則礼安得獨在哉？昔仲叔于奚有功于卫，辞邑而請繁纓，孔子以为不如多与之邑。惟器与名，不可以假人，君之所司也。政亡，則国家从之。卫君待孔子而为政，孔子欲先正名，以为名不正則民无所措手足。夫繁纓，小物也，而孔子惜之；正名，細務也，而孔子先之。誠以名器既乱，則上下无以相有故也。夫事未有不生于微而成于著。圣人之虑远，故能謹其微而治之；眾人之识近，故必待其著而後救之。治其微，則用力寡而功多；救其著，則竭力而不能及也。《易》曰：「履霜，堅冰至」，《书》曰：「一日二日萬幾」，謂此类也。故曰：分莫大于名也。\n:: 嗚呼！幽、厉失德，周道日衰，纲纪散坏，下陵上替，諸侯专征，大夫擅政。礼之大体，什丧七八矣。然文、武之祀犹綿綿相屬者，蓋以周之子孙尚能守其名分故也。何以言之？昔晋文公有大功于王室，請隧于襄王，襄王不許，曰：「王章也。未有代德而有二王，亦叔父之所惡也。不然，叔父有地而隧，又何請焉！」文公于是乎惧而不敢违。是故以周之地則不大于曹、滕，以周之民則不眾于邾、莒，然歷数百年，宗主天下，虽以晋、楚、齐、秦之强，不敢加者，何哉？徒以名分尚存故也。至于季氏之于鲁，田〔恆〕(常)之于齐，，白公之于楚，智伯之于晋，其勢皆足以逐君而自为，然而卒不敢者，豈其力不足而心不忍哉？乃畏奸名犯分而天下共诛之也。今晋大夫暴蔑其君，剖分晋国，天子既不能讨，又宠秩之，使列于諸侯，是区区之名分复不能守而并弃之也。先王之礼于斯盡矣。或者以为當是之时，周室微弱，三晋强盛，虽欲勿許，其可得乎？是大不然。夫三晋虽强，苟不顾天下之诛而犯义侵礼，則不請于天子而自立矣。不請于天子而自立，則为悖逆之臣。天下苟有桓、文之君，必奉礼义而征之。今請于天子而天子許之，是受天子之命而为諸侯也，誰得而讨之！故三晋之列于諸侯，非三晋之坏礼，乃天子自坏之也。\n:: 嗚呼！君臣之礼既坏矣，則天下以智力相雄长，遂使圣贤之後为諸侯者，社稷无不泯絕，生民之害糜灭幾盡，豈不哀哉！"}, {"king": "威烈王", "year": "威烈王二十三年（戊寅，西元前四〇三年）", "main_text": "", "guangzhu": ":: 臣光曰：智伯之亡也，才胜德也。夫才与德异，而世俗莫之能辨，通謂之贤，此其所以失人也。夫聰察强毅之謂才，正直中和之謂德。才者，德之资也；德者，才之帅也。云夢之竹，天下之勁也，然而不矯揉，不羽括，則不能以入堅；棠溪之金，天下之利也，然而不熔范，不砥礪，則不能以擊强。是故才德全盡謂之圣人，才德兼亡謂之愚人，德胜才謂之君子，才胜德謂之小人。凡取人之術，苟不得圣人、君子而与之，与其得小人，不若得愚人。何則？君子挾才以为善，小人挾才以为惡。挾才以为善者，善无不至矣；挾才以为惡者，惡亦无不至矣。愚者虽欲为不善，智不能周，力不能胜，譬之乳狗搏人，人得而制之。小人智足以遂其奸，勇足以决其暴，是虎而翼者也，其为害豈不多哉！夫德者人之所严，而才者人之所愛。愛者易親，严者易疏，是以察者多蔽于才而遗于德。自古昔以來，国之乱臣，家之败子，才有余而德不足，以至于颠覆者多矣，豈特智伯哉！故为国为家者，苟能審于才德之分而知所先後，又何失人之足患哉！"}, {"king": "威烈王", "year": "威烈王二十三年（戊寅，西元前四〇三年）", "main_text": "魏文侯以卜子夏、田子方为師，每过段干木之廬必式。四方贤士多歸之。文侯与群臣饮酒，乐，而天雨，命駕将適野。左右曰：「今日饮酒乐，天又雨，君将安之？」文侯曰：「吾与虞人期獵，虽乐，豈可无一會期哉！」乃往，身自罷之。韩借師于魏以伐赵。文侯曰：「寡人与赵，兄弟也，不敢闻命。」赵借師于魏以伐韩，文侯应之亦然。二国皆怒而去。已而知文侯以講于己也，皆朝于魏。魏由是始大于三晋，諸侯莫能与之争。使乐羊伐中山，克之，以封其子擊。文侯问于群臣曰：「我何如主？」皆曰：「仁君。」任座曰：「君得中山，不以封君之弟而以封君之子，何謂仁君？」文侯怒，任座趨出。次问翟璜，對曰：「仁君也。」文侯曰：「何以知之？」對曰：「臣闻君仁則臣直。向者任座之言直，臣是以知之。」文侯悅，使翟璜召任座而反之，親下堂迎之，以为上客。文侯与田子方饮，文侯曰：「钟聲不比乎？左高。」田子方笑。文侯曰：「何笑？」子方曰：「臣闻之，君明乐官，不明乐音。今君審于音，臣恐其聾于官也。」文侯曰：「善。」子擊出，遭田子方于道，下车伏謁。子方不为礼。子擊怒，謂子方曰：「富貴者骄人乎？貧賤者骄人乎？」子方曰：「亦貧賤者骄人耳，富貴者安敢骄人？国君而骄人則失其国，大夫而骄人則失其家。失其国者未闻有以国待之者也，失其家者未闻有以家待之者也。夫士貧賤者，言不用，行不合，則纳履而去耳，安往而不得貧賤哉！」子擊乃謝之。文侯謂李克曰：「先生嘗有言曰：『家貧思良妻，国乱思良相。』今所置非成則璜，二子何如？」對曰：「卑不谋尊，疏不谋戚。臣在阙門之外，不敢當命。」文侯曰：「先生臨事勿让。」克曰：「君弗察故也。居視其所親，富視其所与，达視其所舉，穷視其所不为，貧視其所不取，五者足以定之矣，何待克哉！」文侯曰：「先生就捨，吾之相定矣。」李克出，见翟璜。翟璜曰：「今者闻君召先生而卜相，果誰为之？」克曰：「魏成。」翟璜忿然作色曰：「西河守吴起，臣所進也；君内以鄴为憂，臣進西門豹；君欲伐中山，臣進乐羊；中山已拔，无使守之，臣進先生；君之子无傅，臣進屈侯鮒。以耳目之所睹记，臣何負于魏成？」李克曰：「子〔之〕言克于子之君者，豈将比周以求大官哉？君问相于克，克之對如是。所以知君之必相魏成者，魏成食祿千钟，什九在外，什一在内，是以东得卜子夏、田子方、段干木。此三人者，君皆師之；子所進五人者，君皆臣之。子惡得与魏成比也！」翟璜逡巡再拜曰：「璜，鄙人也，失對，愿卒为弟子。」\n吴起者，卫人，仕于鲁。齐人伐鲁，鲁人欲以为将，起取齐女为妻，鲁人疑之，起杀妻以求将，大破齐師。或譖之鲁侯曰：「起始事曾參，母死不奔丧，曾參絕之。今又杀妻以求为君将。起，殘忍薄行人也。且以鲁国区区而有胜敵之名，則諸侯图鲁矣。」起恐得罪。闻魏文侯贤，乃往歸之。文侯问諸李克，李克曰：「起貪而好色，然用兵，司马穰苴弗能过也。」于是文侯以为将，擊秦，拔五城。起之为将，与士卒最下者同衣食，臥不設席，行不骑乘，親裹赢糧，与士卒分勞苦。卒有病疽者，起为吮之。卒母闻而哭之。人曰：「子，卒也，而将軍自吮其疽，何哭为？」母曰：「非然也。往年吴公吮其父(疽)，其父战不還踵，遂死于敵。吴公今又吮其子，妾不知其死所矣，是以哭之。」", "guangzhu": ""}, {"king": "威烈王", "year": "威烈王二十三年（戊寅，西元前四〇三年）", "main_text": "4　燕湣公薨，子僖公立。", "guangzhu": ""}, {"king": "威烈王", "year": "威烈王二十四年（己卯，西元前四〇二年）", "main_text": "", "guangzhu": ""}, {"king": "威烈王", "year": "威烈王二十四年（己卯，西元前四〇二年）", "main_text": "2　盗杀楚聲王，国人立其子〔疑，是为〕悼王。", "guangzhu": ""}, {"king": "安王", "year": "安王元年（庚辰，西元前四〇一年）", "main_text": "1　秦伐魏，至陽〔狐〕(孤)。", "guangzhu": ""}, {"king": "安王", "year": "安王二年（辛巳，西元前四〇〇年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王二年（辛巳，西元前四〇〇年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王二年（辛巳，西元前四〇〇年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王二年（辛巳，西元前四〇〇年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王二年（辛巳，西元前四〇〇年）", "main_text": "5　秦简公薨，子惠公立。", "guangzhu": ""}, {"king": "安王", "year": "安王三年（壬午，西元前三九九年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王三年（壬午，西元前三九九年）", "main_text": "2　虢山崩，壅河。", "guangzhu": ""}, {"king": "安王", "year": "安王四年（癸未，西元前三九八年）", "main_text": "1　楚〔败郑師〕，围郑。郑人杀其相駟子陽。", "guangzhu": ""}, {"king": "安王", "year": "安王五年（甲申，西元前三九七年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王五年（甲申，西元前三九七年）", "main_text": "2　〔春〕，三月，盗杀韩相俠累。俠累与濮陽严仲子有惡。仲子闻軹人聶政之勇，以黄金百鎰为政母壽，欲因以報仇。政不受，曰：「老母在，政身未敢以許人也！」及母卒，仲子乃使政刺俠累。俠累方坐府上，兵卫甚眾，聶政直入上階，刺杀俠累，因自皮面抉眼，自屠出腸。韩人暴其尸于市，購问，莫能识。其姊嫈闻而往哭之，曰：「是〔吾弟〕軹深井里聶政也。以妾尚在之故，重自刑以絕从。妾奈何畏歿身之诛，終灭贤弟之名！」遂死于政尸之旁。", "guangzhu": ""}, {"king": "安王", "year": "安王六年（乙酉，西元前三九六年）", "main_text": "1　郑駟子陽之黨弑繻公，而立其弟乙，是为康公。", "guangzhu": ""}, {"king": "安王", "year": "安王八年（丁亥，西元前三九四年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王八年（丁亥，西元前三九四年）", "main_text": "2　郑負黍叛，复歸韩。", "guangzhu": ""}, {"king": "安王", "year": "安王九年（戊子，西元前三九三年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王九年（戊子，西元前三九三年）", "main_text": "2　晋烈公薨，子孝公倾立。", "guangzhu": ""}, {"king": "安王", "year": "安王十一年（庚寅，西元前三九一年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王十一年（庚寅，西元前三九一年）", "main_text": "2　初，田〔恆〕(常)生襄子盤，盤生庄子白，白生太公和。是岁，田和遷齐康公于海上，使食一城，以奉其先祀。", "guangzhu": ""}, {"king": "安王", "year": "安王十二年（辛卯，西元前三九〇年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王十二年（辛卯，西元前三九〇年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王十二年（辛卯，西元前三九〇年）", "main_text": "3　鲁败齐師于平陸。", "guangzhu": ""}, {"king": "安王", "year": "安王十三年（壬辰，西元前三八九年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王十三年（壬辰，西元前三八九年）", "main_text": "2　齐田和會魏文侯、楚人、卫人于浊泽，求为諸侯。魏文侯为之請于王及諸侯，王許之。", "guangzhu": ""}, {"king": "安王", "year": "安王十五年（甲午，西元前三八七年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王十五年（甲午，西元前三八七年）", "main_text": "武侯浮西河而下，中流顾謂吴起曰：「美哉山河之固，此魏国之寶也！」對曰：「在德不在險。昔三苗氏，左洞庭，右彭蠡，德义不修，禹灭之；夏桀之居，左河濟，右泰華，伊阙在其南，羊腸在其北，修政不仁，汤放之；商纣之国，左孟門，右太行，〔恆〕(常)山在其北，大河经其南，修政不德，武王杀之。由此觀之，在德不在險。若君不修德，舟中之人皆敵国也。」武侯曰：「善。」\n魏置相，相田文。吴起不悅，謂田文曰：「請与子论功，可乎？」田文曰：「可。」起曰：「将三軍，使士卒乐死，敵国不敢谋，子孰与起？」文曰：「不如子。」起曰：「治百官，親萬民，实府庫，子孰与起？」文曰：「不如子。」起曰：「守西河而秦兵不敢东乡，韩、赵賓从，子孰与起？」文曰：「不如子。」起曰：「此三者子皆出吾下，而位加吾上，何也？」文曰：「主少国疑，大臣未附，百姓不信，方是之时，屬之子乎，屬之我乎？」起默然良久，曰：「屬之子矣。」〔文曰：「此乃吾所以居子之上也。」吴起乃自知弗如田文〕。久之，〔田文死〕，(魏相)公叔〔为相〕，尚〔魏公〕主而害吴起。公叔之仆曰：「起易去也。起为人剛勁自喜，子先言于君曰：『吴起，贤人也，而君之国小，臣恐起之无留心也，君盍試延以女？起无留心，則必辞矣。』子因与起歸而使公主辱子，起见公主之賤子也，必辞，則子之计中矣。」公叔从之，吴起果辞公主。魏武侯疑之而未信，起惧诛，遂奔楚。楚悼王素闻其贤，至則任之为相。起明法審令，捐不急之官，废公族疏远者，以撫養战鬬之士，要在强兵，破游说之言从橫者。于是南平百越，北卻三晋，西伐秦，諸侯皆患楚之强，而楚之貴戚大臣多怨吴起者。", "guangzhu": ""}, {"king": "安王", "year": "安王十五年（甲午，西元前三八七年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王十五年（甲午，西元前三八七年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王十五年（甲午，西元前三八七年）", "main_text": "5　韩烈侯薨，子文侯立。", "guangzhu": ""}, {"king": "安王", "year": "安王十六年（乙未，西元前三八六年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王十六年（乙未，西元前三八六年）", "main_text": "2　赵公子朝作乱，出奔魏，与魏襲邯鄲，不克。", "guangzhu": ""}, {"king": "安王", "year": "安王十七年（丙申，西元前三八五年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王十七年（丙申，西元前三八五年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王十七年（丙申，西元前三八五年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王十七年（丙申，西元前三八五年）", "main_text": "4　齐太公薨，子桓公午立。", "guangzhu": ""}, {"king": "安王", "year": "安王十九年（戊戌，西元前三八三年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王十九年（戊戌，西元前三八三年）", "main_text": "2　〔鲁穆公薨，子共公奮立〕。", "guangzhu": ""}, {"king": "安王", "year": "安王二十年（己亥，西元前三八二年）", "main_text": "1　日有食之，既。", "guangzhu": ""}, {"king": "安王", "year": "安王二十一年（庚子，西元前三八一年）", "main_text": "1　楚悼王薨，貴戚大臣作乱，攻吴起，起走之王尸而伏之。擊起之徒因射刺起，并中王尸。既葬，〔太子〕肅王〔臧〕即位。使令尹盡诛为乱者，坐起夷宗者七十余家。", "guangzhu": ""}, {"king": "安王", "year": "安王二十二年（辛丑，西元前三八〇年）", "main_text": "1　齐伐燕，取桑丘。魏、韩、赵伐齐，至桑丘。", "guangzhu": ""}, {"king": "安王", "year": "安王二十三年（壬寅，西元前三七九年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王二十三年（壬寅，西元前三七九年）", "main_text": "2　齐康公薨，无子，田氏遂并齐而有之。", "guangzhu": ""}, {"king": "安王", "year": "安王二十四年（癸卯，西元前三七八年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王二十四年（癸卯，西元前三七八年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王二十四年（癸卯，西元前三七八年）", "main_text": "3　晋孝公薨，子靖公俱酒立。", "guangzhu": ""}, {"king": "安王", "year": "安王二十五年（甲辰，西元前三七七年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王二十五年（甲辰，西元前三七七年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王二十五年（甲辰，西元前三七七年）", "main_text": "3　韩文侯薨，子哀侯立。", "guangzhu": ""}, {"king": "安王", "year": "安王二十六年（乙巳，西元前三七六年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王二十六年（乙巳，西元前三七六年）", "main_text": "2　魏、韩、赵共废晋靖公为家人而分其地。", "guangzhu": ""}, {"king": "烈王", "year": "烈王二年（丁未，西元前三七四年）", "main_text": "1　〔韩严遂弑哀侯，国人立其子懿侯若山。初，哀侯以韩廆为相而愛严遂，二人甚相害也。严遂令人刺韩廆于朝，廆走哀侯，哀侯抱之。人刺韩廆，兼及哀侯〕。", "guangzhu": ""}, {"king": "烈王", "year": "烈王三年（戊申，西元前三七三年）", "main_text": "", "guangzhu": ""}, {"king": "烈王", "year": "烈王三年（戊申，西元前三七三年）", "main_text": "", "guangzhu": ""}, {"king": "烈王", "year": "烈王三年（戊申，西元前三七三年）", "main_text": "", "guangzhu": ""}, {"king": "烈王", "year": "烈王三年（戊申，西元前三七三年）", "main_text": "", "guangzhu": ""}, {"king": "烈王", "year": "烈王三年（戊申，西元前三七三年）", "main_text": "6　卫慎侯薨，子聲侯訓立。", "guangzhu": ""}, {"king": "烈王", "year": "烈王四年（己酉，西元前三七二年）", "main_text": "", "guangzhu": ""}, {"king": "烈王", "year": "烈王四年（己酉，西元前三七二年）", "main_text": "2　魏败赵師于北藺。", "guangzhu": ""}, {"king": "烈王", "year": "烈王五年（庚戌，西元前三七一年）", "main_text": "1　魏伐楚，取鲁陽。", "guangzhu": ""}, {"king": "烈王", "year": "烈王六年（辛亥，西元前三七〇年）", "main_text": "", "guangzhu": ""}, {"king": "烈王", "year": "烈王六年（辛亥，西元前三七〇年）", "main_text": "", "guangzhu": ""}, {"king": "烈王", "year": "烈王六年（辛亥，西元前三七〇年）", "main_text": "", "guangzhu": ""}, {"king": "烈王", "year": "烈王六年（辛亥，西元前三七〇年）", "main_text": "", "guangzhu": ""}, {"king": "烈王", "year": "烈王六年（辛亥，西元前三七〇年）", "main_text": "5　〔魏武侯薨，不立太子，子罃与公中缓争立，国内乱〕。", "guangzhu": ""}, {"king": "烈王", "year": "烈王七年（壬子，西元前三六九年）", "main_text": "", "guangzhu": ""}, {"king": "烈王", "year": "烈王七年（壬子，西元前三六九年）", "main_text": "", "guangzhu": ""}, {"king": "烈王", "year": "烈王七年（壬子，西元前三六九年）", "main_text": "3　魏大夫王錯出奔韩。公孙頎謂韩懿侯曰：「魏乱，可取也。」懿侯乃与赵成侯合兵伐魏，战于浊泽，大破之，遂围魏。成侯曰：「杀罃，立公中缓，割地而退，我二国之利也。」懿侯曰：「不可。杀魏君，暴也；割地而退，貪也。不如兩分之。魏分为兩，不强于宋、卫，則我終无魏患矣。」赵人不听。懿侯不悅，以其兵夜去。赵成侯亦去。罃遂杀公中缓而立，是为惠王。", "guangzhu": "::太史公曰：魏惠王之所以身不死，国不分者，二国之谋不和也。若从一家之谋，魏必分矣。故曰：「君終，无適子，其国可破也。」"}];
+// ============================================================
+// DATA — injected by parse_zizhi.py
+// ============================================================
+const DATA = [{"king": "威烈王", "year": "威烈王二十三年（戊寅，西元前四〇三年）", "main_text": "", "guangzhu": ":: 臣光曰：臣闻天子之职莫大于礼，礼莫大于分，分莫大于名。何謂礼？纪纲是也；何謂分？君臣是也；何謂名？公、侯、卿、大夫是也。\n:: 夫以四海之广，兆民之眾，受制于一人，虽有絕倫之力，高世之智，莫敢不奔走而服役者，豈非以礼为之〔纪〕纲(纪)哉！是故天子统三公，三公率諸侯，諸侯制卿大夫，卿大夫治士庶人。貴以臨賤，賤以承貴。上之使下，犹心腹之运手足，根本之制支葉；下之事上，犹手足之卫心腹，支葉之庇本根。然後能上下相保而国家治安。故曰：天子之职莫大于礼也。\n:: 文王序《易》，以乾坤为首。孔子繫之曰：「天尊地卑，乾坤定矣，卑高以阵，貴賤位矣。」言君臣之位，犹天地之不可易也。《春秋》抑諸侯，尊〔周〕(王)室，王人虽微，序于諸侯之上，以是见圣人于君臣之際，未嘗不惓惓也。非有桀、纣之暴，汤、武之仁，人歸之，天命之，君臣之分，當守節伏死而已矣。是故以微子而代纣，則成汤配天矣；以季札而君吴，則太伯血食矣。然二子寧亡国而不为者，誠以礼之大節不可乱也。故曰：礼莫大于分也。\n:: 夫礼，辨貴賤，序親疏，裁群物，制庶事。非名不著，非器不形。名以命之，器以別之，然後上下粲然有倫，此礼之大经也。名器既亡，則礼安得獨在哉？昔仲叔于奚有功于卫，辞邑而請繁纓，孔子以为不如多与之邑。惟器与名，不可以假人，君之所司也。政亡，則国家从之。卫君待孔子而为政，孔子欲先正名，以为名不正則民无所措手足。夫繁纓，小物也，而孔子惜之；正名，細務也，而孔子先之。誠以名器既乱，則上下无以相有故也。夫事未有不生于微而成于著。圣人之虑远，故能謹其微而治之；眾人之识近，故必待其著而後救之。治其微，則用力寡而功多；救其著，則竭力而不能及也。《易》曰：「履霜，堅冰至」，《书》曰：「一日二日萬幾」，謂此类也。故曰：分莫大于名也。\n:: 嗚呼！幽、厉失德，周道日衰，纲纪散坏，下陵上替，諸侯专征，大夫擅政。礼之大体，什丧七八矣。然文、武之祀犹綿綿相屬者，蓋以周之子孙尚能守其名分故也。何以言之？昔晋文公有大功于王室，請隧于襄王，襄王不許，曰：「王章也。未有代德而有二王，亦叔父之所惡也。不然，叔父有地而隧，又何請焉！」文公于是乎惧而不敢违。是故以周之地則不大于曹、滕，以周之民則不眾于邾、莒，然歷数百年，宗主天下，虽以晋、楚、齐、秦之强，不敢加者，何哉？徒以名分尚存故也。至于季氏之于鲁，田〔恆〕(常)之于齐，，白公之于楚，智伯之于晋，其勢皆足以逐君而自为，然而卒不敢者，豈其力不足而心不忍哉？乃畏奸名犯分而天下共诛之也。今晋大夫暴蔑其君，剖分晋国，天子既不能讨，又宠秩之，使列于諸侯，是区区之名分复不能守而并弃之也。先王之礼于斯盡矣。或者以为當是之时，周室微弱，三晋强盛，虽欲勿許，其可得乎？是大不然。夫三晋虽强，苟不顾天下之诛而犯义侵礼，則不請于天子而自立矣。不請于天子而自立，則为悖逆之臣。天下苟有桓、文之君，必奉礼义而征之。今請于天子而天子許之，是受天子之命而为諸侯也，誰得而讨之！故三晋之列于諸侯，非三晋之坏礼，乃天子自坏之也。\n:: 嗚呼！君臣之礼既坏矣，則天下以智力相雄长，遂使圣贤之後为諸侯者，社稷无不泯絕，生民之害糜灭幾盡，豈不哀哉！"}, {"king": "威烈王", "year": "威烈王二十三年（戊寅，西元前四〇三年）", "main_text": "", "guangzhu": ":: 臣光曰：智伯之亡也，才胜德也。夫才与德异，而世俗莫之能辨，通謂之贤，此其所以失人也。夫聰察强毅之謂才，正直中和之謂德。才者，德之资也；德者，才之帅也。云夢之竹，天下之勁也，然而不矯揉，不羽括，則不能以入堅；棠溪之金，天下之利也，然而不熔范，不砥礪，則不能以擊强。是故才德全盡謂之圣人，才德兼亡謂之愚人，德胜才謂之君子，才胜德謂之小人。凡取人之術，苟不得圣人、君子而与之，与其得小人，不若得愚人。何則？君子挾才以为善，小人挾才以为惡。挾才以为善者，善无不至矣；挾才以为惡者，惡亦无不至矣。愚者虽欲为不善，智不能周，力不能胜，譬之乳狗搏人，人得而制之。小人智足以遂其奸，勇足以决其暴，是虎而翼者也，其为害豈不多哉！夫德者人之所严，而才者人之所愛。愛者易親，严者易疏，是以察者多蔽于才而遗于德。自古昔以來，国之乱臣，家之败子，才有余而德不足，以至于颠覆者多矣，豈特智伯哉！故为国为家者，苟能審于才德之分而知所先後，又何失人之足患哉！"}, {"king": "威烈王", "year": "威烈王二十三年（戊寅，西元前四〇三年）", "main_text": "魏文侯以卜子夏、田子方为師，每过段干木之廬必式。四方贤士多歸之。文侯与群臣饮酒，乐，而天雨，命駕将適野。左右曰：「今日饮酒乐，天又雨，君将安之？」文侯曰：「吾与虞人期獵，虽乐，豈可无一會期哉！」乃往，身自罷之。韩借師于魏以伐赵。文侯曰：「寡人与赵，兄弟也，不敢闻命。」赵借師于魏以伐韩，文侯应之亦然。二国皆怒而去。已而知文侯以講于己也，皆朝于魏。魏由是始大于三晋，諸侯莫能与之争。使乐羊伐中山，克之，以封其子擊。文侯问于群臣曰：「我何如主？」皆曰：「仁君。」任座曰：「君得中山，不以封君之弟而以封君之子，何謂仁君？」文侯怒，任座趨出。次问翟璜，對曰：「仁君也。」文侯曰：「何以知之？」對曰：「臣闻君仁則臣直。向者任座之言直，臣是以知之。」文侯悅，使翟璜召任座而反之，親下堂迎之，以为上客。文侯与田子方饮，文侯曰：「钟聲不比乎？左高。」田子方笑。文侯曰：「何笑？」子方曰：「臣闻之，君明乐官，不明乐音。今君審于音，臣恐其聾于官也。」文侯曰：「善。」子擊出，遭田子方于道，下车伏謁。子方不为礼。子擊怒，謂子方曰：「富貴者骄人乎？貧賤者骄人乎？」子方曰：「亦貧賤者骄人耳，富貴者安敢骄人？国君而骄人則失其国，大夫而骄人則失其家。失其国者未闻有以国待之者也，失其家者未闻有以家待之者也。夫士貧賤者，言不用，行不合，則纳履而去耳，安往而不得貧賤哉！」子擊乃謝之。文侯謂李克曰：「先生嘗有言曰：『家貧思良妻，国乱思良相。』今所置非成則璜，二子何如？」對曰：「卑不谋尊，疏不谋戚。臣在阙門之外，不敢當命。」文侯曰：「先生臨事勿让。」克曰：「君弗察故也。居視其所親，富視其所与，达視其所舉，穷視其所不为，貧視其所不取，五者足以定之矣，何待克哉！」文侯曰：「先生就捨，吾之相定矣。」李克出，见翟璜。翟璜曰：「今者闻君召先生而卜相，果誰为之？」克曰：「魏成。」翟璜忿然作色曰：「西河守吴起，臣所進也；君内以鄴为憂，臣進西門豹；君欲伐中山，臣進乐羊；中山已拔，无使守之，臣進先生；君之子无傅，臣進屈侯鮒。以耳目之所睹记，臣何負于魏成？」李克曰：「子〔之〕言克于子之君者，豈将比周以求大官哉？君问相于克，克之對如是。所以知君之必相魏成者，魏成食祿千钟，什九在外，什一在内，是以东得卜子夏、田子方、段干木。此三人者，君皆師之；子所進五人者，君皆臣之。子惡得与魏成比也！」翟璜逡巡再拜曰：「璜，鄙人也，失對，愿卒为弟子。」\n吴起者，卫人，仕于鲁。齐人伐鲁，鲁人欲以为将，起取齐女为妻，鲁人疑之，起杀妻以求将，大破齐師。或譖之鲁侯曰：「起始事曾參，母死不奔丧，曾參絕之。今又杀妻以求为君将。起，殘忍薄行人也。且以鲁国区区而有胜敵之名，則諸侯图鲁矣。」起恐得罪。闻魏文侯贤，乃往歸之。文侯问諸李克，李克曰：「起貪而好色，然用兵，司马穰苴弗能过也。」于是文侯以为将，擊秦，拔五城。起之为将，与士卒最下者同衣食，臥不設席，行不骑乘，親裹赢糧，与士卒分勞苦。卒有病疽者，起为吮之。卒母闻而哭之。人曰：「子，卒也，而将軍自吮其疽，何哭为？」母曰：「非然也。往年吴公吮其父(疽)，其父战不還踵，遂死于敵。吴公今又吮其子，妾不知其死所矣，是以哭之。」", "guangzhu": ""}, {"king": "威烈王", "year": "威烈王二十三年（戊寅，西元前四〇三年）", "main_text": "4　燕湣公薨，子僖公立。", "guangzhu": ""}, {"king": "威烈王", "year": "威烈王二十四年（己卯，西元前四〇二年）", "main_text": "", "guangzhu": ""}, {"king": "威烈王", "year": "威烈王二十四年（己卯，西元前四〇二年）", "main_text": "2　盗杀楚聲王，国人立其子〔疑，是为〕悼王。", "guangzhu": ""}, {"king": "安王", "year": "安王元年（庚辰，西元前四〇一年）", "main_text": "1　秦伐魏，至陽〔狐〕(孤)。", "guangzhu": ""}, {"king": "安王", "year": "安王二年（辛巳，西元前四〇〇年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王二年（辛巳，西元前四〇〇年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王二年（辛巳，西元前四〇〇年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王二年（辛巳，西元前四〇〇年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王二年（辛巳，西元前四〇〇年）", "main_text": "5　秦简公薨，子惠公立。", "guangzhu": ""}, {"king": "安王", "year": "安王三年（壬午，西元前三九九年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王三年（壬午，西元前三九九年）", "main_text": "2　虢山崩，壅河。", "guangzhu": ""}, {"king": "安王", "year": "安王四年（癸未，西元前三九八年）", "main_text": "1　楚〔败郑師〕，围郑。郑人杀其相駟子陽。", "guangzhu": ""}, {"king": "安王", "year": "安王五年（甲申，西元前三九七年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王五年（甲申，西元前三九七年）", "main_text": "2　〔春〕，三月，盗杀韩相俠累。俠累与濮陽严仲子有惡。仲子闻軹人聶政之勇，以黄金百鎰为政母壽，欲因以報仇。政不受，曰：「老母在，政身未敢以許人也！」及母卒，仲子乃使政刺俠累。俠累方坐府上，兵卫甚眾，聶政直入上階，刺杀俠累，因自皮面抉眼，自屠出腸。韩人暴其尸于市，購问，莫能识。其姊嫈闻而往哭之，曰：「是〔吾弟〕軹深井里聶政也。以妾尚在之故，重自刑以絕从。妾奈何畏歿身之诛，終灭贤弟之名！」遂死于政尸之旁。", "guangzhu": ""}, {"king": "安王", "year": "安王六年（乙酉，西元前三九六年）", "main_text": "1　郑駟子陽之黨弑繻公，而立其弟乙，是为康公。", "guangzhu": ""}, {"king": "安王", "year": "安王八年（丁亥，西元前三九四年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王八年（丁亥，西元前三九四年）", "main_text": "2　郑負黍叛，复歸韩。", "guangzhu": ""}, {"king": "安王", "year": "安王九年（戊子，西元前三九三年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王九年（戊子，西元前三九三年）", "main_text": "2　晋烈公薨，子孝公倾立。", "guangzhu": ""}, {"king": "安王", "year": "安王十一年（庚寅，西元前三九一年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王十一年（庚寅，西元前三九一年）", "main_text": "2　初，田〔恆〕(常)生襄子盤，盤生庄子白，白生太公和。是岁，田和遷齐康公于海上，使食一城，以奉其先祀。", "guangzhu": ""}, {"king": "安王", "year": "安王十二年（辛卯，西元前三九〇年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王十二年（辛卯，西元前三九〇年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王十二年（辛卯，西元前三九〇年）", "main_text": "3　鲁败齐師于平陸。", "guangzhu": ""}, {"king": "安王", "year": "安王十三年（壬辰，西元前三八九年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王十三年（壬辰，西元前三八九年）", "main_text": "2　齐田和會魏文侯、楚人、卫人于浊泽，求为諸侯。魏文侯为之請于王及諸侯，王許之。", "guangzhu": ""}, {"king": "安王", "year": "安王十五年（甲午，西元前三八七年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王十五年（甲午，西元前三八七年）", "main_text": "武侯浮西河而下，中流顾謂吴起曰：「美哉山河之固，此魏国之寶也！」對曰：「在德不在險。昔三苗氏，左洞庭，右彭蠡，德义不修，禹灭之；夏桀之居，左河濟，右泰華，伊阙在其南，羊腸在其北，修政不仁，汤放之；商纣之国，左孟門，右太行，〔恆〕(常)山在其北，大河经其南，修政不德，武王杀之。由此觀之，在德不在險。若君不修德，舟中之人皆敵国也。」武侯曰：「善。」\n魏置相，相田文。吴起不悅，謂田文曰：「請与子论功，可乎？」田文曰：「可。」起曰：「将三軍，使士卒乐死，敵国不敢谋，子孰与起？」文曰：「不如子。」起曰：「治百官，親萬民，实府庫，子孰与起？」文曰：「不如子。」起曰：「守西河而秦兵不敢东乡，韩、赵賓从，子孰与起？」文曰：「不如子。」起曰：「此三者子皆出吾下，而位加吾上，何也？」文曰：「主少国疑，大臣未附，百姓不信，方是之时，屬之子乎，屬之我乎？」起默然良久，曰：「屬之子矣。」〔文曰：「此乃吾所以居子之上也。」吴起乃自知弗如田文〕。久之，〔田文死〕，(魏相)公叔〔为相〕，尚〔魏公〕主而害吴起。公叔之仆曰：「起易去也。起为人剛勁自喜，子先言于君曰：『吴起，贤人也，而君之国小，臣恐起之无留心也，君盍試延以女？起无留心，則必辞矣。』子因与起歸而使公主辱子，起见公主之賤子也，必辞，則子之计中矣。」公叔从之，吴起果辞公主。魏武侯疑之而未信，起惧诛，遂奔楚。楚悼王素闻其贤，至則任之为相。起明法審令，捐不急之官，废公族疏远者，以撫養战鬬之士，要在强兵，破游说之言从橫者。于是南平百越，北卻三晋，西伐秦，諸侯皆患楚之强，而楚之貴戚大臣多怨吴起者。", "guangzhu": ""}, {"king": "安王", "year": "安王十五年（甲午，西元前三八七年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王十五年（甲午，西元前三八七年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王十五年（甲午，西元前三八七年）", "main_text": "5　韩烈侯薨，子文侯立。", "guangzhu": ""}, {"king": "安王", "year": "安王十六年（乙未，西元前三八六年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王十六年（乙未，西元前三八六年）", "main_text": "2　赵公子朝作乱，出奔魏，与魏襲邯鄲，不克。", "guangzhu": ""}, {"king": "安王", "year": "安王十七年（丙申，西元前三八五年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王十七年（丙申，西元前三八五年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王十七年（丙申，西元前三八五年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王十七年（丙申，西元前三八五年）", "main_text": "4　齐太公薨，子桓公午立。", "guangzhu": ""}, {"king": "安王", "year": "安王十九年（戊戌，西元前三八三年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王十九年（戊戌，西元前三八三年）", "main_text": "2　〔鲁穆公薨，子共公奮立〕。", "guangzhu": ""}, {"king": "安王", "year": "安王二十年（己亥，西元前三八二年）", "main_text": "1　日有食之，既。", "guangzhu": ""}, {"king": "安王", "year": "安王二十一年（庚子，西元前三八一年）", "main_text": "1　楚悼王薨，貴戚大臣作乱，攻吴起，起走之王尸而伏之。擊起之徒因射刺起，并中王尸。既葬，〔太子〕肅王〔臧〕即位。使令尹盡诛为乱者，坐起夷宗者七十余家。", "guangzhu": ""}, {"king": "安王", "year": "安王二十二年（辛丑，西元前三八〇年）", "main_text": "1　齐伐燕，取桑丘。魏、韩、赵伐齐，至桑丘。", "guangzhu": ""}, {"king": "安王", "year": "安王二十三年（壬寅，西元前三七九年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王二十三年（壬寅，西元前三七九年）", "main_text": "2　齐康公薨，无子，田氏遂并齐而有之。", "guangzhu": ""}, {"king": "安王", "year": "安王二十四年（癸卯，西元前三七八年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王二十四年（癸卯，西元前三七八年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王二十四年（癸卯，西元前三七八年）", "main_text": "3　晋孝公薨，子靖公俱酒立。", "guangzhu": ""}, {"king": "安王", "year": "安王二十五年（甲辰，西元前三七七年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王二十五年（甲辰，西元前三七七年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王二十五年（甲辰，西元前三七七年）", "main_text": "3　韩文侯薨，子哀侯立。", "guangzhu": ""}, {"king": "安王", "year": "安王二十六年（乙巳，西元前三七六年）", "main_text": "", "guangzhu": ""}, {"king": "安王", "year": "安王二十六年（乙巳，西元前三七六年）", "main_text": "2　魏、韩、赵共废晋靖公为家人而分其地。", "guangzhu": ""}, {"king": "烈王", "year": "烈王二年（丁未，西元前三七四年）", "main_text": "1　〔韩严遂弑哀侯，国人立其子懿侯若山。初，哀侯以韩廆为相而愛严遂，二人甚相害也。严遂令人刺韩廆于朝，廆走哀侯，哀侯抱之。人刺韩廆，兼及哀侯〕。", "guangzhu": ""}, {"king": "烈王", "year": "烈王三年（戊申，西元前三七三年）", "main_text": "", "guangzhu": ""}, {"king": "烈王", "year": "烈王三年（戊申，西元前三七三年）", "main_text": "", "guangzhu": ""}, {"king": "烈王", "year": "烈王三年（戊申，西元前三七三年）", "main_text": "", "guangzhu": ""}, {"king": "烈王", "year": "烈王三年（戊申，西元前三七三年）", "main_text": "", "guangzhu": ""}, {"king": "烈王", "year": "烈王三年（戊申，西元前三七三年）", "main_text": "6　卫慎侯薨，子聲侯訓立。", "guangzhu": ""}, {"king": "烈王", "year": "烈王四年（己酉，西元前三七二年）", "main_text": "", "guangzhu": ""}, {"king": "烈王", "year": "烈王四年（己酉，西元前三七二年）", "main_text": "2　魏败赵師于北藺。", "guangzhu": ""}, {"king": "烈王", "year": "烈王五年（庚戌，西元前三七一年）", "main_text": "1　魏伐楚，取鲁陽。", "guangzhu": ""}, {"king": "烈王", "year": "烈王六年（辛亥，西元前三七〇年）", "main_text": "", "guangzhu": ""}, {"king": "烈王", "year": "烈王六年（辛亥，西元前三七〇年）", "main_text": "", "guangzhu": ""}, {"king": "烈王", "year": "烈王六年（辛亥，西元前三七〇年）", "main_text": "", "guangzhu": ""}, {"king": "烈王", "year": "烈王六年（辛亥，西元前三七〇年）", "main_text": "", "guangzhu": ""}, {"king": "烈王", "year": "烈王六年（辛亥，西元前三七〇年）", "main_text": "5　〔魏武侯薨，不立太子，子罃与公中缓争立，国内乱〕。", "guangzhu": ""}, {"king": "烈王", "year": "烈王七年（壬子，西元前三六九年）", "main_text": "", "guangzhu": ""}, {"king": "烈王", "year": "烈王七年（壬子，西元前三六九年）", "main_text": "", "guangzhu": ""}, {"king": "烈王", "year": "烈王七年（壬子，西元前三六九年）", "main_text": "3　魏大夫王錯出奔韩。公孙頎謂韩懿侯曰：「魏乱，可取也。」懿侯乃与赵成侯合兵伐魏，战于浊泽，大破之，遂围魏。成侯曰：「杀罃，立公中缓，割地而退，我二国之利也。」懿侯曰：「不可。杀魏君，暴也；割地而退，貪也。不如兩分之。魏分为兩，不强于宋、卫，則我終无魏患矣。」赵人不听。懿侯不悅，以其兵夜去。赵成侯亦去。罃遂杀公中缓而立，是为惠王。", "guangzhu": "::太史公曰：魏惠王之所以身不死，国不分者，二国之谋不和也。若从一家之谋，魏必分矣。故曰：「君終，无適子，其国可破也。」"}];
 
-// 当前展开的条目
-let openEntry = null;
+// ============================================================
+// ENTRIES: normalize to same shape as shiji-kb POEMS
+// ============================================================
+const ENTRIES = DATA.map(function(d, i){
+  return {
+    id: i,
+    year: d.year || '',
+    title: d.main_text ? d.main_text.substring(0,40) : (d.raw||'').substring(0,40),
+    raw: d.main_text || d.raw || '',
+    guangzhu: d.guangu || d.guuangzhu || d.guanzhu || '',
+    // AI fields (empty for now, to be generated)
+    bai_hua: d.bai_hua || '',
+    xun_gu: d.xun_gu || '',
+    beijing: d.beijing || '',
+    sima_ping: d.sima_ping || '',
+    xitong: d.xitong || '',
+    yingshe: d.yingshe || '',
+    siduan: d.siduan || '',
+  };
+});
 
-// 层级定义
+// ============================================================
+// LAYERS
+// ============================================================
 const LAYERS = [
-  {id:'orig',  label:'📖 原文'},
-  {id:'bai',   label:'🗣️ 白话'},
-  {id:'xun',   label:'🔤 训诂'},
-  {id:'bg',    label:'🏛️ 背景'},
-  {id:'husan', label:'📝 胡注'},
-  {id:'sima',  label:'💬 司马光'},
-  {id:'xitong',label:'🏗️ 系统'},
-  {id:'yingshe',label:'🪞 映射'},
-  {id:'siduan',label:'🤔 思辨'},
+  {id:'orig',  label:'原文',  color:'#8B2500'},
+  {id:'bai',   label:'白话',  color:'#b44a3f'},
+  {id:'xun',   label:'训诂',  color:'#7c6d2f'},
+  {id:'bg',     label:'背景',  color:'#2c5f8a'},
+  {id:'husan', label:'胡注',  color:'#3d5a80'},
+  {id:'sima',  label:'司马光',color:'#6b3a6b'},
+  {id:'xitong',label:'系统', color:'#2e7d32'},
+  {id:'yingshe',label:'映射',color:'#b44a3f'},
+  {id:'siduan',label:'思辨', color:'#555'},
 ];
 
-// 渲染条目
-function renderEntry(entry, index) {
-  const hasGuangzhu = entry.guangu || entry.guangzhu;
-  const isKey = index < 10; // 简化：前10条为重点
-  const filter = window.currentFilter || 'all';
-  if (filter === 'key' && !isKey) return '';
-  if (filter === 'guangzhu' && !hasGuangzhu) return '';
+// ============================================================
+// RENDER TIMELINE
+// ============================================================
+(function(){
+  var kings = {};
+  ENTRIES.forEach(function(e){
+    var m = e.year.match(/^(【?(.{2,4})】?)[\u4e00-\u9fa5]*?(二十[一二三四五六七八九十]+|[零一二二三四五六七八九十]+年)/);
+    if(m){
+      var king = m[1].replace(/[【】]/g,'');
+      if(!kings[king]) kings[king] = [];
+      kings[king].push(e);
+    }
+  });
+  var html = '<div class="tl-item active" data-king="">全部</div>';
+  Object.keys(kings).forEach(function(k){
+    html += '<div class="tl-item" data-king="'+k+'"><span class="tl-yr">'+k+'</span> '+kings[k].length+'条</div>';
+  });
+  document.getElementById('timeline').innerHTML = html;
+})();
 
-  const guangText = entry.guangu || entry.guangzhu || '';
+// ============================================================
+// RENDER FILTER TAGS
+// ============================================================
+var currentFilter = 'all';
+var currentKing = '';
+var currentSearch = '';
 
-  const layerTabs = LAYERS.map((l, i) =>
-    `<button class="ltab${i===0?' active':''}" data-layer="${l.id}">${l.label}</button>`
-  ).join('');
+// ============================================================
+// RENDER EVENT LIST
+// ============================================================
+function renderEvents(){
+  var filtered = ENTRIES.filter(function(e){
+    if(currentKing && e.year.indexOf(currentKing)===-1) return false;
+    if(currentFilter === 'guang' && !e.guangu) return false;
+    if(currentFilter === 'key' && e.id >= 10) return false;
+    if(currentSearch && (e.raw+e.year).indexOf(currentSearch)===-1 &&
+       !(e.title&&e.title.indexOf(currentSearch)!==-1)) return false;
+    return true;
+  });
 
-  // 每层的 HTML
-  const origHTML = `<div class="layer-content active" data-layer="orig">
-    <div class="orig-text">${entry.main_text || entry.raw || '(无原文)'}</div>
-  </div>`;
+  if(filtered.length === 0){
+    document.getElementById('eventList').innerHTML = '<div class="empty-state">暂无符合条件的事件</div>';
+    return;
+  }
 
-  const baiHTML = `<div class="layer-content" data-layer="bai">
-    <div class="layer-label">🗣️ 白话</div>
-    <div class="bai-text">${entry.bai_hua || '(白话待生成)'}</div>
-  </div>`;
-
-  const xunHTML = `<div class="layer-content" data-layer="xun">
-    <div class="layer-label">🔤 训诂</div>
-    <div class="xun-gu">${entry.xun_gu || '(训诂待生成)'}</div>
-  </div>`;
-
-  const bgHTML = `<div class="layer-content" data-layer="bg">
-    <div class="layer-label">🏛️ 背景脉络</div>
-    <div class="bg-timeline">${entry.beijing || '(背景待生成)'}</div>
-  </div>`;
-
-  const husanHTML = `<div class="layer-content" data-layer="husan">
-    <div class="layer-label">📝 胡三省注</div>
-    <div class="husan">
-      <blockquote>${guangText || '(无臣光曰)'}</blockquote>
-    </div>
-  </div>`;
-
-  const simaHTML = `<div class="layer-content" data-layer="sima">
-    <div class="layer-label">💬 司马光评论</div>
-    <div class="sima-block">${entry.sima_ping || '(评论待生成)'}</div>
-  </div>`;
-
-  const xitongHTML = `<div class="layer-content" data-layer="xitong">
-    <div class="layer-label">🏗️ 系统解构</div>
-    <div class="xitong-block">${entry.xitong || '(系统解构待生成)'}</div>
-  </div>`;
-
-  const yingsheHTML = `<div class="layer-content" data-layer="yingshe">
-    <div class="layer-label">🪞 现代映射</div>
-    <div class="yingshe-block">${entry.yingshe || '(现代映射待生成)'}</div>
-  </div>`;
-
-  const siduanHTML = `<div class="layer-content" data-layer="siduan">
-    <div class="layer-label">🤔 思辨训练</div>
-    <div class="siduan-block">${entry.siduan || '(思辨问题待生成)'}</div>
-  </div>`;
-
-  return `
-  <div class="entry" id="entry-${index}" data-index="${index}" data-key="${isKey}" data-hasguang="${!!hasGuangzhu}">
-    <div class="entry-header" onclick="toggleEntry(${index})">
-      <div class="entry-year">${entry.year || ''}</div>
-      <div class="entry-title">${(entry.main_text||entry.raw||'').substring(0,40)}...</div>
-    </div>
-    <div class="entry-body" id="body-${index}" style="display:none">
-      <div class="layer-tabs">${layerTabs}</div>
-      ${origHTML}${baiHTML}${xunHTML}${bgHTML}${husanHTML}${simaHTML}${xitongHTML}${yingsheHTML}${siduanHTML}
-    </div>
-  </div>`;
+  var html = '';
+  filtered.forEach(function(e){
+    var hasGuang = !!e.guangu;
+    var layers = getLayerBadges(e);
+    html += '<div class="event-card" onclick="openEntry('+e.id+')">'+
+      '<div class="card-top">'+
+        '<span class="card-num">'+(e.id+1)+'</span>'+
+        '<div class="card-title">'+escHtml(e.title)+(hasGuang?' <span style="color:var(--guang);font-size:12px">✦</span>':'')+'</div>'+
+      '</div>'+
+      '<div class="card-meta">'+
+        '<span class="card-year">'+e.year+'</span>'+
+        (layers?'<div class="layer-badges">'+layers+'</div>':'')+
+      '</div>'+
+      '<div class="card-ann">'+escHtml(e.raw.substring(0,80))+'</div>'+
+      (hasGuang?'<div class="card-guang">'+escHtml(e.guangu.substring(0,60))+'</div>':'')+
+    '</div>';
+  });
+  document.getElementById('eventList').innerHTML = html;
 }
 
-function toggleEntry(idx) {
-  const body = document.getElementById('body-' + idx);
-  const allBodies = document.querySelectorAll('.entry-body');
-  allBodies.forEach(b => b.style.display = 'none');
-  if (body.style.display === 'none') {
-    body.style.display = 'block';
-    body.scrollIntoView({behavior:'smooth',block:'start'});
-  } else {
-    body.style.display = 'none';
-  }
+function getLayerBadges(e){
+  var active = [];
+  LAYERS.forEach(function(l){
+    if(l.id==='orig') return;
+    var val = e[l.id.replace('husan','guangu')] || e[l.id] || '';
+    if(val) active.push('<span class="layer-badge" style="color:'+l.color+';border-color:'+l.color+'22;background:'+l.color+'08">'+l.label+'</span>');
+  });
+  return active.join('');
 }
 
-// 层级 tab 切换（事件代理）
-document.addEventListener('click', function(e){
-  if (e.target.classList.contains('ltab')) {
-    const panel = e.target.closest('.entry-body');
-    const layerId = e.target.dataset.layer;
-    panel.querySelectorAll('.ltab').forEach(t => t.classList.remove('active'));
-    panel.querySelectorAll('.layer-content').forEach(c => c.classList.remove('active'));
-    e.target.classList.add('active');
-    panel.querySelector(`.layer-content[data-layer="${layerId}"]`).classList.add('active');
+function escHtml(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// ============================================================
+// OPEN ENTRY (layer panel)
+// ============================================================
+var currentEntry = null;
+
+function openEntry(id){
+  currentEntry = ENTRIES[id];
+  var e = currentEntry;
+  var html = LAYERS.map(function(l, i){
+    return '<button class="layer-tab'+(i===0?' on':'')+'" onclick="switchLayer(\''+l.id+'\')">'+l.label+'</button>';
+  }).join('');
+  document.getElementById('layerTabs').innerHTML = html;
+  document.getElementById('layerPanelTitle').textContent = e.year || '详情';
+  document.getElementById('layerOverlay').classList.add('show');
+  document.getElementById('layerPanel').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  renderLayerContent(LAYERS[0].id);
+}
+
+function closeLayer(){
+  document.getElementById('layerOverlay').classList.remove('show');
+  document.getElementById('layerPanel').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('layerOverlay').onclick = closeLayer;
+document.getElementById('layerClose').onclick = closeLayer;
+
+function switchLayer(id){
+  document.querySelectorAll('.layer-tab').forEach(function(t){t.classList.remove('on');});
+  document.querySelector('.layer-tab[onclick*="'+id+'"]').classList.add('on');
+  renderLayerContent(id);
+}
+
+function renderLayerContent(id){
+  var e = currentEntry;
+  if(!e) return;
+  var dataKey = id === 'husan' ? 'guangu' : id;
+  var content = e[dataKey] || '';
+
+  var html = '<div class="ly-header">';
+  html += '<div class="ly-year">'+escHtml(e.year)+'</div>';
+  html += '<div class="ly-title">'+escHtml(e.title)+'</div>';
+  html += '<div class="ly-sep"></div></div>';
+
+  if(id === 'orig'){
+    html += '<div class="orig-block"><p>'+escHtml(e.raw.split('\n').join('</p><p>'))+'</p></div>';
+    if(e.guangu){
+      html += '<div class="ly-sep"></div>';
+      html += '<div class="husan-block"><blockquote>'+escHtml(e.guangu)+'</blockquote></div>';
+    }
   }
+  else if(id === 'bai'){
+    if(content){
+      html += '<div class="bai-block">'+escHtml(content)+'</div>';
+    } else {
+      html += '<div class="bai-block" style="color:var(--sub);font-style:italic">白话翻译待生成</div>';
+    }
+  }
+  else if(id === 'xun'){
+    if(content){
+      html += '<div class="xun-block">'+escHtml(content)+'</div>';
+    } else {
+      html += '<div class="xun-block" style="color:var(--sub);font-style:italic;text-align:center;padding:40px">训诂待生成</div>';
+    }
+  }
+  else if(id === 'bg'){
+    if(content){
+      html += '<div class="bg-block">'+escHtml(content)+'</div>';
+    } else {
+      html += '<div class="bg-block" style="color:var(--sub);font-style:italic;text-align:center;padding:40px">背景脉络待生成</div>';
+    }
+  }
+  else if(id === 'husan'){
+    if(content){
+      html += '<div class="husan-block"><blockquote>'+escHtml(content)+'</blockquote></div>';
+    } else {
+      html += '<div class="husan-block" style="color:var(--sub);font-style:italic;text-align:center;padding:40px">臣光曰待生成</div>';
+    }
+  }
+  else if(id === 'sima'){
+    if(content){
+      html += '<div class="sima-block">'+escHtml(content)+'</div>';
+    } else {
+      html += '<div class="sima-block" style="color:var(--sub);font-style:italic;text-align:center;padding:40px">司马光评论待生成</div>';
+    }
+  }
+  else if(id === 'xitong'){
+    if(content){
+      html += '<div class="xitong-block">'+escHtml(content)+'</div>';
+    } else {
+      html += '<div class="xitong-block" style="color:var(--sub);font-style:italic;text-align:center;padding:40px">系统解构待生成</div>';
+    }
+  }
+  else if(id === 'yingshe'){
+    if(content){
+      html += '<div class="yingshe-block">'+escHtml(content)+'</div>';
+    } else {
+      html += '<div class="yingshe-block" style="color:var(--sub);font-style:italic;text-align:center;padding:40px">现代映射待生成</div>';
+    }
+  }
+  else if(id === 'siduan'){
+    if(content){
+      html += '<div class="siduan-block">'+escHtml(content)+'</div>';
+    } else {
+      html += '<div class="siduan-block" style="color:var(--sub);font-style:italic;text-align:center;padding:40px">思辨训练待生成</div>';
+    }
+  }
+
+  document.getElementById('layerBody').innerHTML = html;
+}
+
+// ============================================================
+// TOOLTIP
+// ============================================================
+(function(){
+  var tip = document.getElementById('tip');
+  document.addEventListener('mouseover', function(e){
+    var el = e.target.closest('.e');
+    if(!el) return;
+    var type = el.dataset.type||'', name = el.dataset.name||'', desc = el.dataset.desc||'';
+    document.getElementById('tipType').textContent = type;
+    document.getElementById('tipName').textContent = name;
+    tip.classList.add('show');
+    requestAnimationFrame(function(){
+      var rect = el.getBoundingClientRect();
+      var tw = tip.offsetWidth, th = tip.offsetHeight;
+      var left = rect.left+rect.width/2-tw/2, top = rect.top-th-10;
+      if(left<8) left=8; if(left+tw>window.innerWidth-8) left=window.innerWidth-tw-8;
+      if(top<60) top=rect.bottom+10;
+      tip.style.left=left+'px'; tip.style.top=top+'px';
+    });
+  });
+  document.addEventListener('mouseout', function(e){
+    if(!e.target.closest('.e')) return;
+    tip.classList.remove('show');
+  });
+})();
+
+// ============================================================
+// TIMELINE EVENTS
+// ============================================================
+document.getElementById('timeline').addEventListener('click', function(e){
+  var item = e.target.closest('.tl-item');
+  if(!item) return;
+  document.querySelectorAll('.tl-item').forEach(function(t){t.classList.remove('active');});
+  item.classList.add('active');
+  currentKing = item.dataset.king || '';
+  renderEvents();
 });
 
-// 筛选
-window.currentFilter = 'all';
-document.getElementById('filterBar').addEventListener('click', function(e){
-  if (e.target.classList.contains('fbtn')) {
-    window.currentFilter = e.target.dataset.filter;
-    document.querySelectorAll('.fbtn').forEach(b => b.classList.remove('active'));
-    e.target.classList.add('active');
-    renderAll();
-  }
+// ============================================================
+// FILTER TAGS
+// ============================================================
+document.getElementById('filterTags').addEventListener('click', function(e){
+  var ftag = e.target.closest('.ftag');
+  if(!ftag) return;
+  document.querySelectorAll('.ftag').forEach(function(f){f.classList.remove('active');});
+  ftag.classList.add('active');
+  currentFilter = ftag.dataset.filter;
+  renderEvents();
 });
 
-function renderAll() {
-  const container = document.getElementById('entryList');
-  const html = ENTRIES.map((e,i) => renderEntry(e,i)).join('');
-  container.innerHTML = html || '<div class="empty">暂无符合条件的事件</div>';
-}
+// ============================================================
+// SEARCH
+// ============================================================
+(function(){
+  var timer = null;
+  var inp = document.getElementById('searchInput');
+  var clone = inp.cloneNode(true);
+  inp.parentNode.replaceChild(clone, inp);
+  clone.addEventListener('input', function(){
+    clearTimeout(timer);
+    timer = setTimeout(function(){
+      currentSearch = clone.value.trim();
+      renderEvents();
+    },      300);
+    });
+  })();
 
-// 初始化
-renderAll();
-</script>
-</body>
-</html>
+  // ============================================================
+  // INIT
+  // ============================================================
+  renderEvents();
+  </script>
+  </body>
+  </html>
